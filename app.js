@@ -1,3 +1,57 @@
+let currentLang = "en";
+let lastMetaStats = null;
+
+const I18N = {
+  en: {
+    subtitle: "Cryptographic key generator powered by live orbital telemetry (NOAA SWPC, GOES, DSCOVR, and ISS) combined with hardware CSPRNG seeding. Runs entirely in your browser with zero backend.",
+    selectLabel: "Select cosmic telemetry source:",
+    opt_all: "0. [Multi-Stream] Combine all 5 cosmic APIs simultaneously (Max Entropy)",
+    opt_sw: "1. NOAA DSCOVR — Solar Wind (Plasma at Lagrange Point L1)",
+    opt_mag: "2. NOAA DSCOVR — Interplanetary Magnetic Field (Bx, By, Bz vectors)",
+    opt_xray: "3. NOAA GOES — Solar Corona X-Ray Flux",
+    opt_protons: "4. NOAA GOES — High-Energy Cosmic Proton Flux",
+    opt_iss: "5. ISS Orbital Telemetry — Coordinates, velocity, and solar angles",
+    btnGenerate: "Harvest Cosmic Entropy",
+    btnFetching: "Fetching telemetry from orbital satellites...",
+    metaSourceLabel: "Active Sources",
+    metaBytesLabel: "Entropy Bytes Processed",
+    hashLabel: "256-Bit Cryptographic Key (SHA-256)",
+    btnCopy: "Copy Key",
+    btnCopied: "Copied to clipboard!",
+    statusRequest: "📡 Requesting telemetry from orbital satellites...",
+    statusSuccess: "✅ Cosmic entropy harvested, CSPRNG-seeded, and whitened.",
+    statusErrorPrefix: "❌ Error: ",
+    errNoData: "Failed to retrieve data from any cosmic API. Please check your connection.",
+    bytesUnit: "bytes",
+    samplesUnit: "samples + 128-bit CSPRNG",
+    rawPrefix: "Raw sensor sample excerpt: "
+  },
+  ru: {
+    subtitle: "Генератор криптографических ключей на основе живой космической телеметрии (NOAA SWPC, спутники GOES, DSCOVR и МКС) с подмешиванием аппаратного CSPRNG. Работает полностью в браузере без бэкенда.",
+    selectLabel: "Выберите космический источник данных:",
+    opt_all: "0. [Мульти-поток] Объединить все 5 космических API сразу (Макс. энтропия)",
+    opt_sw: "1. NOAA DSCOVR — Солнечный ветер (плазма в точке Лагранжа L1)",
+    opt_mag: "2. NOAA DSCOVR — Межпланетное магнитное поле (векторы Bx, By, Bz)",
+    opt_xray: "3. NOAA GOES — Рентгеновское излучение солнечной короны",
+    opt_protons: "4. NOAA GOES — Потоки высокоэнергетических космических протонов",
+    opt_iss: "5. Орбитальная телеметрия МКС — Координаты, скорость и солнечные углы",
+    btnGenerate: "Собрать энтропию из космоса",
+    btnFetching: "Запрос телеметрии с орбитальных спутников...",
+    metaSourceLabel: "Активные источники",
+    metaBytesLabel: "Обработано байт энтропии",
+    hashLabel: "256-битный криптографический ключ (SHA-256)",
+    btnCopy: "Скопировать ключ",
+    btnCopied: "Скопировано в буфер обмена!",
+    statusRequest: "📡 Запрос телеметрии с орбитальных спутников...",
+    statusSuccess: "✅ Космическая энтропия собрана, усилена CSPRNG и отбелена.",
+    statusErrorPrefix: "❌ Ошибка: ",
+    errNoData: "Не удалось получить данные ни от одного космического API. Проверьте сеть.",
+    bytesUnit: "байт",
+    samplesUnit: "замеров + 128-бит CSPRNG",
+    rawPrefix: "Фрагмент сырых замеров с датчиков: "
+  }
+};
+
 const SPACE_APIS = {
   solar_wind: {
     name: "NOAA DSCOVR Solar Wind (L1)",
@@ -21,89 +75,37 @@ const SPACE_APIS = {
   }
 };
 
-const TRANSLATIONS = {
-  en: {
-    title: "🛰️ Cosmic Entropy Generator",
-    subtitle: "A browser-based cryptographic key generator powered by live orbital telemetry (NOAA SWPC, GOES, DSCOVR, and ISS). Runs entirely client-side with zero backend dependencies.",
-    selectLabel: "Select a cosmic data source:",
-    optAll: "0. [Multi-Stream] Combine all 5 space APIs simultaneously (Max entropy)",
-    optSolarWind: "1. NOAA DSCOVR — Solar Wind (Plasma at Lagrange Point L1)",
-    optMagField: "2. NOAA DSCOVR — Interplanetary Magnetic Field (Bx, By, Bz vectors)",
-    optXray: "3. NOAA GOES — Solar Corona X-Ray Flux",
-    optProtons: "4. NOAA GOES — High-Energy Cosmic Proton Flux",
-    optIss: "5. ISS Orbital Telemetry — Coordinates, Velocity & Solar Angles",
-    btnGenerate: "Harvest Cosmic Entropy",
-    metaSourcesLabel: "Active Sources",
-    metaBytesLabel: "Telemetry Processed",
-    hashLabel: "256-Bit Cryptographic Key (SHA-256)",
-    btnCopy: "Copy Key",
-    btnCopied: "Copied to clipboard!",
-    statusRequesting: "📡 Requesting telemetry from orbital satellites...",
-    statusSuccess: "✅ Cosmic entropy successfully harvested and whitened.",
-    statusErrorPrefix: "❌ Error: ",
-    errNoApis: "Unable to retrieve data from any cosmic API. Please check your network connection.",
-    bytesUnit: "bytes",
-    samplesUnit: "samples",
-    rawPreviewPrefix: "Sample raw sensor measurements: "
-  },
-  ru: {
-    title: "🛰️ Генератор космической энтропии",
-    subtitle: "Генератор криптографических ключей на основе живой космической телеметрии (NOAA SWPC, спутники GOES, DSCOVR и МКС). Работает полностью в браузере без бэкенда.",
-    selectLabel: "Выберите космический источник данных:",
-    optAll: "0. [Мульти-поток] Объединить все 5 космических API сразу (Макс. энтропия)",
-    optSolarWind: "1. NOAA DSCOVR — Солнечный ветер (плазма в точке Лагранжа L1)",
-    optMagField: "2. NOAA DSCOVR — Межпланетное магнитное поле (векторы Bx, By, Bz)",
-    optXray: "3. NOAA GOES — Рентгеновское излучение солнечной короны",
-    optProtons: "4. NOAA GOES — Потоки высокоэнергетических космических протонов",
-    optIss: "5. Орбитальная телеметрия МКС — Координаты, скорость и солнечные углы",
-    btnGenerate: "Собрать энтропию из космоса",
-    metaSourcesLabel: "Активные источники",
-    metaBytesLabel: "Обработано байт телеметрии",
-    hashLabel: "256-битный криптографический ключ (SHA-256)",
-    btnCopy: "Скопировать ключ",
-    btnCopied: "Скопировано в буфер обмена!",
-    statusRequesting: "📡 Запрос телеметрии с орбитальных спутников...",
-    statusSuccess: "✅ Космическая энтропия успешно собрана и отбелена.",
-    statusErrorPrefix: "❌ Ошибка: ",
-    errNoApis: "Не удалось получить данные ни от одного космического API. Проверьте сеть.",
-    bytesUnit: "байт",
-    samplesUnit: "замеров",
-    rawPreviewPrefix: "Фрагмент сырых замеров с датчиков: "
-  }
-};
-
-let currentLang = "en";
-let lastResultState = null;
-
 function setLanguage(lang) {
-  if (!TRANSLATIONS[lang]) return;
   currentLang = lang;
+  const dict = I18N[lang];
   document.documentElement.lang = lang;
 
   document.getElementById("langEn").classList.toggle("active", lang === "en");
   document.getElementById("langRu").classList.toggle("active", lang === "ru");
 
-  const dict = TRANSLATIONS[lang];
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    if (dict[key]) {
-      el.textContent = dict[key];
+  document.getElementById("subtitleText").textContent = dict.subtitle;
+  document.getElementById("selectLabel").textContent = dict.selectLabel;
+  document.getElementById("generateBtn").textContent = dict.btnGenerate;
+  document.getElementById("metaSourceLabel").textContent = dict.metaSourceLabel;
+  document.getElementById("metaBytesLabel").textContent = dict.metaBytesLabel;
+  document.getElementById("hashLabel").textContent = dict.hashLabel;
+  document.getElementById("copyBtn").textContent = dict.btnCopy;
+
+  const options = document.querySelectorAll("#sourceSelect option");
+  options.forEach(opt => {
+    const key = opt.getAttribute("data-i18n");
+    if (key && dict[key]) {
+      opt.textContent = dict[key];
     }
   });
 
-  if (lastResultState) {
-    renderDynamicResult();
+  if (lastMetaStats) {
+    document.getElementById("metaBytes").textContent =
+      `${lastMetaStats.byteCount} ${dict.bytesUnit} (${lastMetaStats.sampleCount} ${dict.samplesUnit})`;
+    document.getElementById("rawPreview").textContent =
+      dict.rawPrefix + lastMetaStats.previewSlice.join(", ") + "...";
+    document.getElementById("statusLog").textContent = dict.statusSuccess;
   }
-}
-
-function renderDynamicResult() {
-  if (!lastResultState) return;
-  const dict = TRANSLATIONS[currentLang];
-  document.getElementById("metaBytes").textContent =
-    `${lastResultState.byteCount} ${dict.bytesUnit} (${lastResultState.sampleCount} ${dict.samplesUnit})`;
-  document.getElementById("rawPreview").textContent =
-    dict.rawPreviewPrefix + lastResultState.previewNumbers.join(", ") + "...";
-  document.getElementById("statusLog").textContent = dict.statusSuccess;
 }
 
 function extractNumericChaos(obj, acc = []) {
@@ -116,13 +118,9 @@ function extractNumericChaos(obj, acc = []) {
     }
   } else if (Array.isArray(obj)) {
     const slice = obj.slice(-25);
-    for (const item of slice) {
-      extractNumericChaos(item, acc);
-    }
+    for (const item of slice) extractNumericChaos(item, acc);
   } else if (obj && typeof obj === "object") {
-    for (const val of Object.values(obj)) {
-      extractNumericChaos(val, acc);
-    }
+    for (const val of Object.values(obj)) extractNumericChaos(val, acc);
   }
   return acc;
 }
@@ -136,6 +134,7 @@ function extractLSBBytes(numbers) {
     floatView[i] = numbers[i];
   }
 
+  // Extract 2 least significant mantissa bytes per Float64 sample
   const lsbArray = new Uint8Array(numbers.length * 2);
   for (let i = 0; i < numbers.length; i++) {
     lsbArray[i * 2] = byteView[i * 8];
@@ -154,27 +153,24 @@ async function fetchApiData(key) {
   const api = SPACE_APIS[key];
   const separator = api.url.includes("?") ? "&" : "?";
   const response = await fetch(`${api.url}${separator}_t=${Date.now()}`, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`${api.name}: HTTP ${response.status}`);
-  }
+  if (!response.ok) throw new Error(`${api.name}: HTTP ${response.status}`);
   const json = await response.json();
   const numbers = extractNumericChaos(json);
-  if (numbers.length === 0) {
-    throw new Error(`${api.name}: empty numeric payload`);
-  }
+  if (numbers.length === 0) throw new Error(`${api.name}: no numeric telemetry`);
   return { name: api.name, numbers };
 }
 
 async function harvestEntropy() {
-  const dict = TRANSLATIONS[currentLang];
+  const dict = I18N[currentLang];
   const btn = document.getElementById("generateBtn");
   const log = document.getElementById("statusLog");
   const resultBox = document.getElementById("resultBox");
   const selected = document.getElementById("sourceSelect").value;
 
   btn.disabled = true;
+  btn.textContent = dict.btnFetching;
   resultBox.style.display = "none";
-  log.textContent = dict.statusRequesting;
+  log.textContent = dict.statusRequest;
 
   try {
     const keysToFetch = selected === "all" ? Object.keys(SPACE_APIS) : [selected];
@@ -185,7 +181,7 @@ async function harvestEntropy() {
       .map(r => r.value);
 
     if (successful.length === 0) {
-      throw new Error(dict.errNoApis);
+      throw new Error(dict.errNoData);
     }
 
     let allNumbers = [];
@@ -196,36 +192,54 @@ async function harvestEntropy() {
       activeNames.push(item.name);
     }
 
-    allNumbers.push(performance.now(), Date.now() * Math.random());
+    // Add high-resolution local timing jitter
+    allNumbers.push(performance.now(), Date.now());
 
-    const lsbBytes = extractLSBBytes(allNumbers);
-    const finalHash = await sha256Hex(lsbBytes);
+    // Extract LSB bytes from cosmic telemetry
+    const cosmicLsbBytes = extractLSBBytes(allNumbers);
 
-    lastResultState = {
-      byteCount: lsbBytes.length,
+    // Generate 128 bits (16 bytes) of cryptographically secure local seed via Web Crypto CSPRNG
+    const localCsprngSeed = new Uint8Array(new Uint32Array(4).buffer);
+    crypto.getRandomValues(localCsprngSeed);
+
+    // Combine cosmic LSB entropy + hardware CSPRNG seed into a single buffer
+    const combinedPool = new Uint8Array(cosmicLsbBytes.length + localCsprngSeed.length);
+    combinedPool.set(cosmicLsbBytes, 0);
+    combinedPool.set(localCsprngSeed, cosmicLsbBytes.length);
+
+    // Final cryptographic whitening with SHA-256
+    const finalHash = await sha256Hex(combinedPool);
+
+    lastMetaStats = {
+      byteCount: combinedPool.length,
       sampleCount: allNumbers.length,
-      previewNumbers: allNumbers.slice(0, 12)
+      previewSlice: allNumbers.slice(0, 12)
     };
 
     document.getElementById("metaSource").textContent = activeNames.join(" + ");
+    document.getElementById("metaBytes").textContent =
+      `${combinedPool.length} ${dict.bytesUnit} (${allNumbers.length} ${dict.samplesUnit})`;
     document.getElementById("hashOutput").textContent = finalHash;
-    renderDynamicResult();
+    document.getElementById("rawPreview").textContent =
+      dict.rawPrefix + lastMetaStats.previewSlice.join(", ") + "...";
 
+    log.textContent = dict.statusSuccess;
     resultBox.style.display = "block";
   } catch (err) {
     log.textContent = dict.statusErrorPrefix + err.message;
   } finally {
     btn.disabled = false;
+    btn.textContent = dict.btnGenerate;
   }
 }
 
 function copyHash() {
-  const dict = TRANSLATIONS[currentLang];
+  const dict = I18N[currentLang];
   const hashText = document.getElementById("hashOutput").textContent;
   const copyBtn = document.getElementById("copyBtn");
   navigator.clipboard.writeText(hashText);
   copyBtn.textContent = dict.btnCopied;
   setTimeout(() => {
-    copyBtn.textContent = TRANSLATIONS[currentLang].btnCopy;
+    copyBtn.textContent = I18N[currentLang].btnCopy;
   }, 2000);
 }
