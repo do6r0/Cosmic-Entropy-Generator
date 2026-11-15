@@ -13,24 +13,21 @@
     <div class="header">
       <h1>🛰️ Cosmic Entropy Generator</h1>
     </div>
-    <div class="lang-switch" role="group" aria-label="Language switcher">
-      <button id="langEn" class="lang-btn active" onclick="setLanguage('en')">EN</button>
-      <button id="langRu" class="lang-btn" onclick="setLanguage('ru')">RU</button>
-    </div>
+    <button id="langToggle" class="lang-btn" onclick="toggleLanguage()" title="Switch language">RU</button>
   </div>
 
-  <p id="subtitleText" class="subtitle">
-    Cryptographic key generator powered by live orbital telemetry (NOAA SWPC, GOES, DSCOVR, and ISS) combined with hardware CSPRNG seeding. Runs entirely in your browser with zero backend.
+  <p id="subtitle" class="subtitle">
+    Cryptographic key generator powered by live space telemetry (NOAA SWPC, GOES, SOLAR-1/ACE, and ISS). Runs entirely in your browser with hybrid hardware CSPRNG seeding.
   </p>
 
-  <label id="selectLabel" for="sourceSelect">Select cosmic telemetry source:</label>
+  <label id="sourceLabel" for="sourceSelect">Select cosmic data source:</label>
   <select id="sourceSelect">
-    <option value="all" data-i18n="opt_all">0. [Multi-Stream] Combine all 5 cosmic APIs simultaneously (Max Entropy)</option>
-    <option value="solar_wind" data-i18n="opt_sw">1. NOAA DSCOVR — Solar Wind (Plasma at Lagrange Point L1)</option>
-    <option value="mag_field" data-i18n="opt_mag">2. NOAA DSCOVR — Interplanetary Magnetic Field (Bx, By, Bz vectors)</option>
-    <option value="xray" data-i18n="opt_xray">3. NOAA GOES — Solar Corona X-Ray Flux</option>
-    <option value="protons" data-i18n="opt_protons">4. NOAA GOES — High-Energy Cosmic Proton Flux</option>
-    <option value="iss" data-i18n="opt_iss">5. ISS Orbital Telemetry — Coordinates, velocity, and solar angles</option>
+    <option value="all" data-en="0. [Multi-Stream] Combine all 5 space APIs simultaneously (Max entropy)" data-ru="0. [Мульти-поток] Объединить все 5 космических API сразу (Макс. энтропия)">0. [Multi-Stream] Combine all 5 space APIs simultaneously (Max entropy)</option>
+    <option value="solar_wind" data-en="1. NOAA RTSW — Real-Time Solar Wind Plasma (Lagrange Point L1)" data-ru="1. NOAA RTSW — Солнечный ветер в реальном времени (точка Лагранжа L1)">1. NOAA RTSW — Real-Time Solar Wind Plasma (Lagrange Point L1)</option>
+    <option value="mag_field" data-en="2. NOAA RTSW — Interplanetary Magnetic Field (Bx, By, Bz vectors)" data-ru="2. NOAA RTSW — Межпланетное магнитное поле (векторы Bx, By, Bz)">2. NOAA RTSW — Interplanetary Magnetic Field (Bx, By, Bz vectors)</option>
+    <option value="xray" data-en="3. NOAA GOES — Solar Corona X-Ray Flux" data-ru="3. NOAA GOES — Рентгеновское излучение солнечной короны">3. NOAA GOES — Solar Corona X-Ray Flux</option>
+    <option value="protons" data-en="4. NOAA GOES — High-Energy Cosmic Proton Flux" data-ru="4. NOAA GOES — Потоки высокоэнергетических космических протонов">4. NOAA GOES — High-Energy Cosmic Proton Flux</option>
+    <option value="iss" data-en="5. ISS Orbital Telemetry — Coordinates, velocity & solar angles" data-ru="5. Орбитальная телеметрия МКС — Координаты, скорость и солнечные углы">5. ISS Orbital Telemetry — Coordinates, velocity & solar angles</option>
   </select>
 
   <button id="generateBtn" class="btn-primary" onclick="harvestEntropy()">
@@ -46,7 +43,7 @@
         <strong id="metaSource">—</strong>
       </div>
       <div class="meta-item">
-        <span id="metaBytesLabel">Entropy Bytes Processed</span>
+        <span id="metaBytesLabel">Entropy Pool Size</span>
         <strong id="metaBytes">—</strong>
       </div>
     </div>
