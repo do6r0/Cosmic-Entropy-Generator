@@ -48,5 +48,5 @@ A client-side True Random Number Generator (TRNG) web application built with van
 
 1. **Telemetry Acquisition:**  When triggered, `app.js` queries the selected satellite API(s) with cache-busting timestamps (`_t=Date.now()`) to retrieve the latest sensor readings.
 2. **Chaos Extraction:**  Numeric values are recursively parsed from the JSON payloads and packed into a `Float64Array`.  The script isolates the two least significant bytes of each 64-bit mantissa, capturing subtle physical fluctuations while discarding predictable macro-trends.
-3. **Local Jitter Mixing:**  High-precision sub-millisecond timing (`performance.now()`) is appended to guarantee uniqueness even if two keys are generated within the same satellite polling window.
+3. **CSPRNG & Jitter Seeding:**  The cosmic byte pool is concatenated with 16 bytes (128 bits) generated via `window.crypto.getRandomValues(new Uint32Array(4))` alongside high-resolution `performance.now()` timestamps.
 4. **SHA-256 Whitening:**  The combined byte buffer is passed through `window.crypto.subtle.digest("SHA-256", ...)` to yield a uniformly distributed 64-character hexadecimal key.
