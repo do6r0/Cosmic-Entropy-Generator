@@ -1,3 +1,4 @@
+Demo: https://do6r0.github.io/Cosmic-Entropy-Generator/
 # Cosmic Entropy Generator (Browser Edition)
 
 A client-side True Random Number Generator (TRNG) web application built with vanilla HTML, CSS, and JavaScript.  It harvests live orbital telemetry from public space weather and satellite APIs—including solar wind plasma, interplanetary magnetic field vectors, solar X-ray flux, high-energy cosmic protons, and International Space Station (ISS) coordinates—to generate cryptographically whitened 256-bit keys directly inside your browser.
