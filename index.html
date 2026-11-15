@@ -9,28 +9,31 @@
 <body>
 
 <div class="container">
-  <div class="header">
-    <h1 data-i18n="title">🛰️ Cosmic Entropy Generator</h1>
+  <div class="top-bar">
+    <div class="header">
+      <h1>🛰️ Cosmic Entropy Generator</h1>
+    </div>
     <div class="lang-switch" role="group" aria-label="Language switcher">
-      <button type="button" id="langEn" class="lang-btn active" onclick="setLanguage('en')">EN</button>
-      <button type="button" id="langRu" class="lang-btn" onclick="setLanguage('ru')">RU</button>
+      <button id="langEn" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+      <button id="langRu" class="lang-btn" onclick="setLanguage('ru')">RU</button>
     </div>
   </div>
-  <p class="subtitle" data-i18n="subtitle">
-    A browser-based cryptographic key generator powered by live orbital telemetry (NOAA SWPC, GOES, DSCOVR, and ISS). Runs entirely client-side with zero backend dependencies.
+
+  <p id="subtitleText" class="subtitle">
+    Cryptographic key generator powered by live orbital telemetry (NOAA SWPC, GOES, DSCOVR, and ISS) combined with hardware CSPRNG seeding. Runs entirely in your browser with zero backend.
   </p>
 
-  <label for="sourceSelect" data-i18n="selectLabel">Select a cosmic data source:</label>
+  <label id="selectLabel" for="sourceSelect">Select cosmic telemetry source:</label>
   <select id="sourceSelect">
-    <option value="all" data-i18n="optAll">0. [Multi-Stream] Combine all 5 space APIs simultaneously (Max entropy)</option>
-    <option value="solar_wind" data-i18n="optSolarWind">1. NOAA DSCOVR — Solar Wind (Plasma at Lagrange Point L1)</option>
-    <option value="mag_field" data-i18n="optMagField">2. NOAA DSCOVR — Interplanetary Magnetic Field (Bx, By, Bz vectors)</option>
-    <option value="xray" data-i18n="optXray">3. NOAA GOES — Solar Corona X-Ray Flux</option>
-    <option value="protons" data-i18n="optProtons">4. NOAA GOES — High-Energy Cosmic Proton Flux</option>
-    <option value="iss" data-i18n="optIss">5. ISS Orbital Telemetry — Coordinates, Velocity & Solar Angles</option>
+    <option value="all" data-i18n="opt_all">0. [Multi-Stream] Combine all 5 cosmic APIs simultaneously (Max Entropy)</option>
+    <option value="solar_wind" data-i18n="opt_sw">1. NOAA DSCOVR — Solar Wind (Plasma at Lagrange Point L1)</option>
+    <option value="mag_field" data-i18n="opt_mag">2. NOAA DSCOVR — Interplanetary Magnetic Field (Bx, By, Bz vectors)</option>
+    <option value="xray" data-i18n="opt_xray">3. NOAA GOES — Solar Corona X-Ray Flux</option>
+    <option value="protons" data-i18n="opt_protons">4. NOAA GOES — High-Energy Cosmic Proton Flux</option>
+    <option value="iss" data-i18n="opt_iss">5. ISS Orbital Telemetry — Coordinates, velocity, and solar angles</option>
   </select>
 
-  <button id="generateBtn" class="btn-primary" onclick="harvestEntropy()" data-i18n="btnGenerate">
+  <button id="generateBtn" class="btn-primary" onclick="harvestEntropy()">
     Harvest Cosmic Entropy
   </button>
 
@@ -39,18 +42,18 @@
   <div id="resultBox" class="result-box">
     <div class="meta-grid">
       <div class="meta-item">
-        <span data-i18n="metaSourcesLabel">Active Sources</span>
+        <span id="metaSourceLabel">Active Sources</span>
         <strong id="metaSource">—</strong>
       </div>
       <div class="meta-item">
-        <span data-i18n="metaBytesLabel">Telemetry Processed</span>
+        <span id="metaBytesLabel">Entropy Bytes Processed</span>
         <strong id="metaBytes">—</strong>
       </div>
     </div>
 
-    <div class="hash-label" data-i18n="hashLabel">256-Bit Cryptographic Key (SHA-256)</div>
+    <div id="hashLabel" class="hash-label">256-Bit Cryptographic Key (SHA-256)</div>
     <div id="hashOutput" class="hash-output"></div>
-    <button id="copyBtn" class="btn-copy" onclick="copyHash()" data-i18n="btnCopy">Copy Key</button>
+    <button id="copyBtn" class="btn-copy" onclick="copyHash()">Copy Key</button>
 
     <div class="raw-preview" id="rawPreview"></div>
   </div>
