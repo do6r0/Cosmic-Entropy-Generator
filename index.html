@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmic Entropy Generator — Live Space Telemetry TRNG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1 data-i18n="title">🛰️ Cosmic Entropy Generator</h1>
+    <div class="lang-switch" role="group" aria-label="Language switcher">
+      <button type="button" id="langEn" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+      <button type="button" id="langRu" class="lang-btn" onclick="setLanguage('ru')">RU</button>
+    </div>
+  </div>
+  <p class="subtitle" data-i18n="subtitle">
+    A browser-based cryptographic key generator powered by live orbital telemetry (NOAA SWPC, GOES, DSCOVR, and ISS). Runs entirely client-side with zero backend dependencies.
+  </p>
+
+  <label for="sourceSelect" data-i18n="selectLabel">Select a cosmic data source:</label>
+  <select id="sourceSelect">
+    <option value="all" data-i18n="optAll">0. [Multi-Stream] Combine all 5 space APIs simultaneously (Max entropy)</option>
+    <option value="solar_wind" data-i18n="optSolarWind">1. NOAA DSCOVR — Solar Wind (Plasma at Lagrange Point L1)</option>
+    <option value="mag_field" data-i18n="optMagField">2. NOAA DSCOVR — Interplanetary Magnetic Field (Bx, By, Bz vectors)</option>
+    <option value="xray" data-i18n="optXray">3. NOAA GOES — Solar Corona X-Ray Flux</option>
+    <option value="protons" data-i18n="optProtons">4. NOAA GOES — High-Energy Cosmic Proton Flux</option>
+    <option value="iss" data-i18n="optIss">5. ISS Orbital Telemetry — Coordinates, Velocity & Solar Angles</option>
+  </select>
+
+  <button id="generateBtn" class="btn-primary" onclick="harvestEntropy()" data-i18n="btnGenerate">
+    Harvest Cosmic Entropy
+  </button>
+
+  <div id="statusLog" class="status-log"></div>
+
+  <div id="resultBox" class="result-box">
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span data-i18n="metaSourcesLabel">Active Sources</span>
+        <strong id="metaSource">—</strong>
+      </div>
+      <div class="meta-item">
+        <span data-i18n="metaBytesLabel">Telemetry Processed</span>
+        <strong id="metaBytes">—</strong>
+      </div>
+    </div>
+
+    <div class="hash-label" data-i18n="hashLabel">256-Bit Cryptographic Key (SHA-256)</div>
+    <div id="hashOutput" class="hash-output"></div>
+    <button id="copyBtn" class="btn-copy" onclick="copyHash()" data-i18n="btnCopy">Copy Key</button>
+
+    <div class="raw-preview" id="rawPreview"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
